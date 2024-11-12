@@ -1,0 +1,81 @@
+esphome:
+  name: mbus-kamstrup-reader
+  friendly_name: MBUS Kamstrup reader
+
+esp32:
+  board: esp32dev
+  framework:
+    type: arduino
+
+# Enable logging
+logger:
+
+# Enable Home Assistant API
+api:
+  encryption:
+    key: "<key>"
+
+ota:
+  - platform: esphome
+    password: "<password>"
+
+wifi:
+  ssid: !secret wifi_ssid
+  password: !secret wifi_password
+
+  # Enable fallback hotspot (captive portal) in case wifi connection fails
+  ap:
+    ssid: "Mbus-Kamstrup-Reader"
+    password: "<password>"
+
+captive_portal:
+
+external_components:
+  - source: my_components
+
+uart:
+  tx_pin: GPIO17
+  rx_pin: GPIO5
+  baud_rate: 2400
+  rx_buffer_size: 256
+  data_bits: 8
+  parity: EVEN
+  stop_bits: 1
+
+meter_bus:
+  meter_address: 42
+  polling_interval: 120
+
+sensor:
+  - platform: meter_bus
+    id: meter_bus_instance
+    energy_watthour:
+      name: "Energy"
+    energy_joule:
+      name: "Energy"
+    volume:
+      name: "Volume"
+    mass:
+      name: "Mass"
+    power_watt:
+      name: "Power"
+    power_jouleperhour:
+      name: "Power"
+    volume_flow_hour:
+      name: "Volume flow"
+    volume_flow_minute:
+      name: "Volume flow"
+    volume_flow_second:
+      name: "Volume flow"
+    mass_flow:
+      name: "Mass flow"
+    flow_temp:
+      name: "Flow temperature"
+    return_temp:
+      name: "Return temperature"
+    delta_temp:
+      name: "Temperature difference"
+    external_temp:
+      name: "External temperature"
+    pressure:
+      name: "Pressure"
