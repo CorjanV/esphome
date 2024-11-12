@@ -31,7 +31,10 @@ wifi:
 captive_portal:
 
 external_components:
-  - source: my_components
+  source:
+    type: git
+    url: https://github.com/CorjanV/esphome
+    ref: main
 
 uart:
   tx_pin: GPIO17
