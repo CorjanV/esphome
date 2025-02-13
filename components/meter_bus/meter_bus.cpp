@@ -146,11 +146,11 @@ bool MeterBusSensor::mbus_parse_frame(int frame_length) {
     }
     // ESP_LOGCONFIG(TAG, "testcounter=%d", testcounter);
     for(i=19; i<(frame_length-1); i++) {
-        ESP_LOGCONFIG(TAG, "CHECKPOINT 1");
+        ESP_LOGCONFIG(TAG, "CHECKPOINT 1, index=%d", i);
         checksum += telegram[i];
         testcounter++;
         if(DIF) {
-            ESP_LOGCONFIG(TAG, "CHECKPOINT 2");
+            ESP_LOGCONFIG(TAG, "CHECKPOINT 2, index=%d", i);
             if((telegram[i] & 0b10000000) == 0) { // check if DIF extension bit is not set
                 if(((telegram[i] & 0x0F) <= 0b00000100) && ((telegram[i] & 0x0F) != 0b00000101)) { // Filter and keep data with 1, 2, 3 or 4 byte integers
                     number_of_data_bytes = telegram[i] & 0x0F;
@@ -164,11 +164,11 @@ bool MeterBusSensor::mbus_parse_frame(int frame_length) {
             } // else there are DIFE bytes after the DIF byte
         }
         if(VIF) {
-            ESP_LOGCONFIG(TAG, "CHECKPOINT 3");
+            ESP_LOGCONFIG(TAG, "CHECKPOINT 3, index=%d", i);
             if((telegram[i] & 0b10000000) == 0) { // check if VIF extension bit is not set
-                ESP_LOGCONFIG(TAG, "CHECKPOINT 4");
+                ESP_LOGCONFIG(TAG, "CHECKPOINT 4, index=%d", i);
                 if((telegram[i] & 0b01111000) == 0b00000000) { // Energy (Wh)
-                    ESP_LOGCONFIG(TAG, "CHECKPOINT 5");
+                    ESP_LOGCONFIG(TAG, "CHECKPOINT 5, index=%d", i);
                     ESP_LOGCONFIG(TAG, "Energy (Wh)=%02X", telegram[i]);
                     double multiplyer = telegram[i] & 0b00000111;
                     ESP_LOGCONFIG(TAG, "multiplyer=%d", multiplyer);
@@ -188,8 +188,7 @@ bool MeterBusSensor::mbus_parse_frame(int frame_length) {
                     continue;
                 }
                 else if((telegram[i] & 0b01111000) == 0b00001000) { // Energy (Joule)
-                    ESP_LOGCONFIG(TAG, "CHECKPOINT 6");
-                    double multiplyer = telegram[i] & 0b00000111;
+                                        double multiplyer = telegram[i] & 0b00000111;
                     multiplyer = pow(10, multiplyer);
                     int i_data = 0;
                     int helper = 0;
@@ -204,6 +203,7 @@ bool MeterBusSensor::mbus_parse_frame(int frame_length) {
                     continue;
                 }
                 else if((telegram[i] & 0b01111000) == 0b00010000) { // Volume (m3)
+                    ESP_LOGCONFIG(TAG, "CHECKPOINT 6, index=%d", i);
                     double multiplyer = telegram[i] & 0b00000111;
                     multiplyer = pow(10, multiplyer-6);
                     int i_data = 0;
@@ -409,14 +409,14 @@ bool MeterBusSensor::mbus_parse_frame(int frame_length) {
                     continue;
                 }
             } else { // Detected VIFE
-                ESP_LOGCONFIG(TAG, "CHECKPOINT 7");
+                ESP_LOGCONFIG(TAG, "CHECKPOINT 7, index=%d", i);
                 VIF = false;
                 VIFE = true;
                 continue;
             }
         }
         if(VIFE) {
-            ESP_LOGCONFIG(TAG, "CHECKPOINT 8");
+            ESP_LOGCONFIG(TAG, "CHECKPOINT 8, index=%d", i);
             int i_data = 0;
             for(i_data=0; i_data<number_of_data_bytes; i_data++) {
                 checksum += telegram[1+i+i_data];
@@ -427,14 +427,14 @@ bool MeterBusSensor::mbus_parse_frame(int frame_length) {
             continue;
         }
     }
-    ESP_LOGCONFIG(TAG, "CHECKPOINT 9");
+    ESP_LOGCONFIG(TAG, "CHECKPOINT 9, index=%d", i);
     if(telegram[frame_length-1] != (checksum & 0xFF)) {
         memset(telegram, 0, sizeof(telegram));
         index = 0;
         // ESP_LOGCONFIG(TAG, "Checksum error (tlgrm vs cs): %02X %02X", telegram[frame_length-1], (checksum & 0xFF));
         return false;
     }
-    ESP_LOGCONFIG(TAG, "CHECKPOINT 10");
+    ESP_LOGCONFIG(TAG, "CHECKPOINT 10, index=%d", i);
     publish_sensor_data();
     memset(telegram, 0, sizeof(telegram));
     index = 0;
