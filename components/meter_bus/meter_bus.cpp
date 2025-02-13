@@ -167,6 +167,7 @@ bool MeterBusSensor::mbus_parse_frame(int frame_length) {
             if((telegram[i] & 0b10000000) == 0) { // check if DIF extension bit is not set
                 if(((telegram[i] & 0x0F) <= 0b00000100) && ((telegram[i] & 0x0F) != 0b00000101)) { // Filter and keep data with 1, 2, 3 or 4 byte integers
                     number_of_data_bytes = telegram[i] & 0x0F;
+                    ESP_LOGCONFIG(TAG, "number_of_data_bytes=%d, index=%d", number_of_data_bytes, i);
                     DIF = false;
                     VIF = true;
                     continue;
