@@ -51,7 +51,7 @@ void MeterBusComponent::loop() {
         if(available()) {
             telegram[index] = read();
             index++;     
-            if(telegram[index-1] == MBUS_FRAME_STOPSIGN && index > 100) {
+            if(telegram[index-1] == MBUS_FRAME_STOPSIGN && index > 100) { // BEUNHAAS
                 new_telegram_available = true;
                 // ESP_LOGCONFIG(TAG, "stopsign=%02X", MBUS_FRAME_STOPSIGN);
                 // ESP_LOGCONFIG(TAG, "telegram[index-1]=%02X", telegram[index-1]);
@@ -99,19 +99,19 @@ void MeterBusSensor::dump_config() {
 bool MeterBusSensor::mbus_parse_frame(int frame_length) {
     // ESP_LOGCONFIG(TAG, "framelength=%d", frame_length);
     // ESP_LOGCONFIG(TAG, "telegram[0]=%02X telegram[1]=%02X telegram[2]=%02X, telegram[3]=%02X", telegram[0], telegram[1], telegram[2], telegram[3]);
-    ESP_LOGCONFIG(TAG, "telegram[0]=%02X telegram[1]=%02X telegram[2]=%02X, telegram[3]=%02X, telegram[4]=%02X, telegram[5]=%02X, telegram[6]=%02X, telegram[7]=%02X, telegram[8]=%02X, telegram[9]=%02X", telegram[0], telegram[1], telegram[2], telegram[3], telegram[4], telegram[5], telegram[6], telegram[7], telegram[8], telegram[9]);
-    ESP_LOGCONFIG(TAG, "telegram[10]=%02X telegram[11]=%02X telegram[12]=%02X, telegram[13]=%02X, telegram[14]=%02X, telegram[15]=%02X, telegram[16]=%02X, telegram[17]=%02X, telegram[18]=%02X, telegram[19]=%02X", telegram[10], telegram[11], telegram[12], telegram[13], telegram[14], telegram[15], telegram[16], telegram[17], telegram[18], telegram[19]);
-    ESP_LOGCONFIG(TAG, "telegram[20]=%02X telegram[21]=%02X telegram[22]=%02X, telegram[23]=%02X, telegram[24]=%02X, telegram[25]=%02X, telegram[26]=%02X, telegram[27]=%02X, telegram[28]=%02X, telegram[29]=%02X", telegram[20], telegram[21], telegram[22], telegram[23], telegram[24], telegram[25], telegram[26], telegram[27], telegram[28], telegram[29]);
-    ESP_LOGCONFIG(TAG, "telegram[30]=%02X telegram[31]=%02X telegram[32]=%02X, telegram[33]=%02X, telegram[34]=%02X, telegram[35]=%02X, telegram[36]=%02X, telegram[37]=%02X, telegram[38]=%02X, telegram[39]=%02X", telegram[30], telegram[31], telegram[32], telegram[33], telegram[34], telegram[35], telegram[36], telegram[37], telegram[38], telegram[39]);
-    ESP_LOGCONFIG(TAG, "telegram[40]=%02X telegram[41]=%02X telegram[42]=%02X, telegram[43]=%02X, telegram[44]=%02X, telegram[45]=%02X, telegram[46]=%02X, telegram[47]=%02X, telegram[48]=%02X, telegram[49]=%02X", telegram[40], telegram[41], telegram[42], telegram[43], telegram[44], telegram[45], telegram[46], telegram[47], telegram[48], telegram[49]);
-    ESP_LOGCONFIG(TAG, "telegram[50]=%02X telegram[51]=%02X telegram[52]=%02X, telegram[53]=%02X, telegram[54]=%02X, telegram[55]=%02X, telegram[56]=%02X, telegram[57]=%02X, telegram[58]=%02X, telegram[59]=%02X", telegram[50], telegram[51], telegram[52], telegram[53], telegram[54], telegram[55], telegram[56], telegram[57], telegram[58], telegram[59]);
-    ESP_LOGCONFIG(TAG, "telegram[60]=%02X telegram[61]=%02X telegram[62]=%02X, telegram[63]=%02X, telegram[64]=%02X, telegram[65]=%02X, telegram[66]=%02X, telegram[67]=%02X, telegram[68]=%02X, telegram[69]=%02X", telegram[60], telegram[61], telegram[62], telegram[63], telegram[64], telegram[65], telegram[66], telegram[67], telegram[68], telegram[69]);
-    ESP_LOGCONFIG(TAG, "telegram[70]=%02X telegram[71]=%02X telegram[72]=%02X, telegram[73]=%02X, telegram[74]=%02X, telegram[75]=%02X, telegram[76]=%02X, telegram[77]=%02X, telegram[78]=%02X, telegram[79]=%02X", telegram[70], telegram[71], telegram[72], telegram[73], telegram[74], telegram[75], telegram[76], telegram[77], telegram[78], telegram[79]);
-    ESP_LOGCONFIG(TAG, "telegram[80]=%02X telegram[81]=%02X telegram[82]=%02X, telegram[83]=%02X, telegram[84]=%02X, telegram[85]=%02X, telegram[86]=%02X, telegram[87]=%02X, telegram[88]=%02X, telegram[89]=%02X", telegram[80], telegram[81], telegram[82], telegram[83], telegram[84], telegram[85], telegram[86], telegram[87], telegram[88], telegram[89]);
-    ESP_LOGCONFIG(TAG, "telegram[90]=%02X telegram[91]=%02X telegram[92]=%02X, telegram[93]=%02X, telegram[94]=%02X, telegram[95]=%02X, telegram[96]=%02X, telegram[97]=%02X, telegram[98]=%02X, telegram[99]=%02X", telegram[90], telegram[91], telegram[92], telegram[93], telegram[94], telegram[95], telegram[96], telegram[97], telegram[98], telegram[99]);
-    ESP_LOGCONFIG(TAG, "telegram[100]=%02X telegram[101]=%02X telegram[102]=%02X, telegram[103]=%02X, telegram[104]=%02X, telegram[105]=%02X, telegram[106]=%02X, telegram[107]=%02X, telegram[108]=%02X, telegram[109]=%02X", telegram[100], telegram[101], telegram[102], telegram[103], telegram[104], telegram[105], telegram[106], telegram[107], telegram[108], telegram[109]);
-    ESP_LOGCONFIG(TAG, "telegram[110]=%02X telegram[111]=%02X telegram[112]=%02X, telegram[113]=%02X, telegram[114]=%02X, telegram[115]=%02X, telegram[116]=%02X, telegram[117]=%02X, telegram[118]=%02X, telegram[119]=%02X", telegram[110], telegram[111], telegram[112], telegram[113], telegram[114], telegram[115], telegram[116], telegram[117], telegram[118], telegram[119]);
-    ESP_LOGCONFIG(TAG, "telegram[120]=%02X telegram[121]=%02X telegram[122]=%02X, telegram[123]=%02X, telegram[124]=%02X, telegram[125]=%02X, telegram[126]=%02X, telegram[127]=%02X, telegram[128]=%02X, telegram[129]=%02X", telegram[120], telegram[121], telegram[122], telegram[123], telegram[124], telegram[125], telegram[126], telegram[127], telegram[128], telegram[129]);
+    // ESP_LOGCONFIG(TAG, "telegram[0]=%02X telegram[1]=%02X telegram[2]=%02X, telegram[3]=%02X, telegram[4]=%02X, telegram[5]=%02X, telegram[6]=%02X, telegram[7]=%02X, telegram[8]=%02X, telegram[9]=%02X", telegram[0], telegram[1], telegram[2], telegram[3], telegram[4], telegram[5], telegram[6], telegram[7], telegram[8], telegram[9]);
+    // ESP_LOGCONFIG(TAG, "telegram[10]=%02X telegram[11]=%02X telegram[12]=%02X, telegram[13]=%02X, telegram[14]=%02X, telegram[15]=%02X, telegram[16]=%02X, telegram[17]=%02X, telegram[18]=%02X, telegram[19]=%02X", telegram[10], telegram[11], telegram[12], telegram[13], telegram[14], telegram[15], telegram[16], telegram[17], telegram[18], telegram[19]);
+    // ESP_LOGCONFIG(TAG, "telegram[20]=%02X telegram[21]=%02X telegram[22]=%02X, telegram[23]=%02X, telegram[24]=%02X, telegram[25]=%02X, telegram[26]=%02X, telegram[27]=%02X, telegram[28]=%02X, telegram[29]=%02X", telegram[20], telegram[21], telegram[22], telegram[23], telegram[24], telegram[25], telegram[26], telegram[27], telegram[28], telegram[29]);
+    // ESP_LOGCONFIG(TAG, "telegram[30]=%02X telegram[31]=%02X telegram[32]=%02X, telegram[33]=%02X, telegram[34]=%02X, telegram[35]=%02X, telegram[36]=%02X, telegram[37]=%02X, telegram[38]=%02X, telegram[39]=%02X", telegram[30], telegram[31], telegram[32], telegram[33], telegram[34], telegram[35], telegram[36], telegram[37], telegram[38], telegram[39]);
+    // ESP_LOGCONFIG(TAG, "telegram[40]=%02X telegram[41]=%02X telegram[42]=%02X, telegram[43]=%02X, telegram[44]=%02X, telegram[45]=%02X, telegram[46]=%02X, telegram[47]=%02X, telegram[48]=%02X, telegram[49]=%02X", telegram[40], telegram[41], telegram[42], telegram[43], telegram[44], telegram[45], telegram[46], telegram[47], telegram[48], telegram[49]);
+    // ESP_LOGCONFIG(TAG, "telegram[50]=%02X telegram[51]=%02X telegram[52]=%02X, telegram[53]=%02X, telegram[54]=%02X, telegram[55]=%02X, telegram[56]=%02X, telegram[57]=%02X, telegram[58]=%02X, telegram[59]=%02X", telegram[50], telegram[51], telegram[52], telegram[53], telegram[54], telegram[55], telegram[56], telegram[57], telegram[58], telegram[59]);
+    // ESP_LOGCONFIG(TAG, "telegram[60]=%02X telegram[61]=%02X telegram[62]=%02X, telegram[63]=%02X, telegram[64]=%02X, telegram[65]=%02X, telegram[66]=%02X, telegram[67]=%02X, telegram[68]=%02X, telegram[69]=%02X", telegram[60], telegram[61], telegram[62], telegram[63], telegram[64], telegram[65], telegram[66], telegram[67], telegram[68], telegram[69]);
+    // ESP_LOGCONFIG(TAG, "telegram[70]=%02X telegram[71]=%02X telegram[72]=%02X, telegram[73]=%02X, telegram[74]=%02X, telegram[75]=%02X, telegram[76]=%02X, telegram[77]=%02X, telegram[78]=%02X, telegram[79]=%02X", telegram[70], telegram[71], telegram[72], telegram[73], telegram[74], telegram[75], telegram[76], telegram[77], telegram[78], telegram[79]);
+    // ESP_LOGCONFIG(TAG, "telegram[80]=%02X telegram[81]=%02X telegram[82]=%02X, telegram[83]=%02X, telegram[84]=%02X, telegram[85]=%02X, telegram[86]=%02X, telegram[87]=%02X, telegram[88]=%02X, telegram[89]=%02X", telegram[80], telegram[81], telegram[82], telegram[83], telegram[84], telegram[85], telegram[86], telegram[87], telegram[88], telegram[89]);
+    // ESP_LOGCONFIG(TAG, "telegram[90]=%02X telegram[91]=%02X telegram[92]=%02X, telegram[93]=%02X, telegram[94]=%02X, telegram[95]=%02X, telegram[96]=%02X, telegram[97]=%02X, telegram[98]=%02X, telegram[99]=%02X", telegram[90], telegram[91], telegram[92], telegram[93], telegram[94], telegram[95], telegram[96], telegram[97], telegram[98], telegram[99]);
+    // ESP_LOGCONFIG(TAG, "telegram[100]=%02X telegram[101]=%02X telegram[102]=%02X, telegram[103]=%02X, telegram[104]=%02X, telegram[105]=%02X, telegram[106]=%02X, telegram[107]=%02X, telegram[108]=%02X, telegram[109]=%02X", telegram[100], telegram[101], telegram[102], telegram[103], telegram[104], telegram[105], telegram[106], telegram[107], telegram[108], telegram[109]);
+    // ESP_LOGCONFIG(TAG, "telegram[110]=%02X telegram[111]=%02X telegram[112]=%02X, telegram[113]=%02X, telegram[114]=%02X, telegram[115]=%02X, telegram[116]=%02X, telegram[117]=%02X, telegram[118]=%02X, telegram[119]=%02X", telegram[110], telegram[111], telegram[112], telegram[113], telegram[114], telegram[115], telegram[116], telegram[117], telegram[118], telegram[119]);
+    // ESP_LOGCONFIG(TAG, "telegram[120]=%02X telegram[121]=%02X telegram[122]=%02X, telegram[123]=%02X, telegram[124]=%02X, telegram[125]=%02X, telegram[126]=%02X, telegram[127]=%02X, telegram[128]=%02X, telegram[129]=%02X", telegram[120], telegram[121], telegram[122], telegram[123], telegram[124], telegram[125], telegram[126], telegram[127], telegram[128], telegram[129]);
     frame_length--;
     uint16_t checksum = 0;
     int i;
@@ -159,33 +159,33 @@ bool MeterBusSensor::mbus_parse_frame(int frame_length) {
     }
     // ESP_LOGCONFIG(TAG, "testcounter=%d", testcounter);
     for(i=19; i<(frame_length-1); i++) {
-        ESP_LOGCONFIG(TAG, "CHECKPOINT 1, index=%d", i);
+        // ESP_LOGCONFIG(TAG, "CHECKPOINT 1, index=%d", i);
         checksum += telegram[i];
         testcounter++;
         if(DIF) {
-            ESP_LOGCONFIG(TAG, "CHECKPOINT 2, index=%d", i);
+            // ESP_LOGCONFIG(TAG, "CHECKPOINT 2, index=%d", i);
             if((telegram[i] & 0b10000000) == 0) { // check if DIF extension bit is not set
                 if(((telegram[i] & 0x0F) <= 0b00000100) && ((telegram[i] & 0x0F) != 0b00000101)) { // Filter and keep data with 1, 2, 3 or 4 byte integers
                     number_of_data_bytes = telegram[i] & 0x0F;
-                    ESP_LOGCONFIG(TAG, "number_of_data_bytes=%d, index=%d", number_of_data_bytes, i);
+                    // ESP_LOGCONFIG(TAG, "number_of_data_bytes=%d, index=%d", number_of_data_bytes, i);
                     DIF = false;
                     VIF = true;
                     continue;
                 } else {
-                    ESP_LOGCONFIG(TAG, "Error DIF at index : %d", i);
+                    // ESP_LOGCONFIG(TAG, "Error DIF at index : %d", i);
                     return false; // Length of data can not be defined and will cause errors while parsing the telegram, so return false
                 }
             } // else there are DIFE bytes after the DIF byte
         }
         if(VIF) {
-            ESP_LOGCONFIG(TAG, "CHECKPOINT 3, index=%d", i);
+            // ESP_LOGCONFIG(TAG, "CHECKPOINT 3, index=%d", i);
             if((telegram[i] & 0b10000000) == 0) { // check if VIF extension bit is not set
-                ESP_LOGCONFIG(TAG, "CHECKPOINT 4, index=%d", i);
-                if((telegram[i] & 0b01111000) == 0b00000000) { // Energy (Wh)
-                    ESP_LOGCONFIG(TAG, "CHECKPOINT 5, index=%d", i);
-                    ESP_LOGCONFIG(TAG, "Energy (Wh)=%02X", telegram[i]);
+                // ESP_LOGCONFIG(TAG, "CHECKPOINT 4, index=%d", i);
+                if((telegram[i] & 0b01111000) == 0b00000000 && i < 30) { // Energy (Wh) BEUNHAAS
+                    // ESP_LOGCONFIG(TAG, "CHECKPOINT 5, index=%d", i);
+                    // ESP_LOGCONFIG(TAG, "Energy (Wh)=%02X", telegram[i]);
                     double multiplyer = telegram[i] & 0b00000111;
-                    ESP_LOGCONFIG(TAG, "multiplyer=%d", multiplyer);
+                    // ESP_LOGCONFIG(TAG, "multiplyer=%d", multiplyer);
                     multiplyer = pow(10, multiplyer-3);
                     int i_data = 0;
                     int helper = 0;
@@ -193,9 +193,9 @@ bool MeterBusSensor::mbus_parse_frame(int frame_length) {
                         helper |= telegram[1+i+i_data] << i_data*8;
                         checksum += telegram[1+i+i_data]; 
                     }
-                    ESP_LOGCONFIG(TAG, "helper=%d", helper);
+                    // ESP_LOGCONFIG(TAG, "helper=%d", helper);
                     energy_watthour_value = (float)(helper*multiplyer);
-                    ESP_LOGCONFIG(TAG, "energy_watthour_value=%.6f", energy_watthour_value);
+                    // ESP_LOGCONFIG(TAG, "energy_watthour_value=%.6f", energy_watthour_value);
                     i += number_of_data_bytes;
                     VIF = false;
                     DIF = true;
@@ -217,7 +217,7 @@ bool MeterBusSensor::mbus_parse_frame(int frame_length) {
                     continue;
                 }
                 else if((telegram[i] & 0b01111000) == 0b00010000) { // Volume (m3)
-                    ESP_LOGCONFIG(TAG, "CHECKPOINT 6, index=%d", i);
+                    // ESP_LOGCONFIG(TAG, "CHECKPOINT 6, index=%d", i);
                     double multiplyer = telegram[i] & 0b00000111;
                     multiplyer = pow(10, multiplyer-6);
                     int i_data = 0;
@@ -423,14 +423,14 @@ bool MeterBusSensor::mbus_parse_frame(int frame_length) {
                     continue;
                 }
             } else { // Detected VIFE
-                ESP_LOGCONFIG(TAG, "CHECKPOINT 7, index=%d", i);
+                // ESP_LOGCONFIG(TAG, "CHECKPOINT 7, index=%d", i);
                 VIF = false;
                 VIFE = true;
                 continue;
             }
         }
         if(VIFE) {
-            ESP_LOGCONFIG(TAG, "CHECKPOINT 8, index=%d", i);
+            // ESP_LOGCONFIG(TAG, "CHECKPOINT 8, index=%d", i);
             int i_data = 0;
             for(i_data=0; i_data<number_of_data_bytes; i_data++) {
                 checksum += telegram[1+i+i_data];
@@ -441,14 +441,14 @@ bool MeterBusSensor::mbus_parse_frame(int frame_length) {
             continue;
         }
     }
-    ESP_LOGCONFIG(TAG, "CHECKPOINT 9, index=%d", i);
+    // ESP_LOGCONFIG(TAG, "CHECKPOINT 9, index=%d", i);
     if(telegram[frame_length-1] != (checksum & 0xFF)) {
         memset(telegram, 0, sizeof(telegram));
         index = 0;
         // ESP_LOGCONFIG(TAG, "Checksum error (tlgrm vs cs): %02X %02X", telegram[frame_length-1], (checksum & 0xFF));
         return false;
     }
-    ESP_LOGCONFIG(TAG, "CHECKPOINT 10, index=%d", i);
+    // ESP_LOGCONFIG(TAG, "CHECKPOINT 10, index=%d", i);
     publish_sensor_data();
     memset(telegram, 0, sizeof(telegram));
     index = 0;
