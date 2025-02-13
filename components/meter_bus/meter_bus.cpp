@@ -188,6 +188,7 @@ bool MeterBusSensor::mbus_parse_frame(int frame_length) {
                     continue;
                 }
                 else if((telegram[i] & 0b01111000) == 0b00001000) { // Energy (Joule)
+                    ESP_LOGCONFIG(TAG, "CHECKPOINT 6");
                     double multiplyer = telegram[i] & 0b00000111;
                     multiplyer = pow(10, multiplyer);
                     int i_data = 0;
@@ -408,12 +409,14 @@ bool MeterBusSensor::mbus_parse_frame(int frame_length) {
                     continue;
                 }
             } else { // Detected VIFE
+                ESP_LOGCONFIG(TAG, "CHECKPOINT 7");
                 VIF = false;
                 VIFE = true;
                 continue;
             }
         }
         if(VIFE) {
+            ESP_LOGCONFIG(TAG, "CHECKPOINT 8");
             int i_data = 0;
             for(i_data=0; i_data<number_of_data_bytes; i_data++) {
                 checksum += telegram[1+i+i_data];
@@ -424,14 +427,14 @@ bool MeterBusSensor::mbus_parse_frame(int frame_length) {
             continue;
         }
     }
-
+    ESP_LOGCONFIG(TAG, "CHECKPOINT 9");
     if(telegram[frame_length-1] != (checksum & 0xFF)) {
         memset(telegram, 0, sizeof(telegram));
         index = 0;
         // ESP_LOGCONFIG(TAG, "Checksum error (tlgrm vs cs): %02X %02X", telegram[frame_length-1], (checksum & 0xFF));
         return false;
     }
-
+    ESP_LOGCONFIG(TAG, "CHECKPOINT 10");
     publish_sensor_data();
     memset(telegram, 0, sizeof(telegram));
     index = 0;
