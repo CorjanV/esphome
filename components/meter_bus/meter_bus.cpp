@@ -144,7 +144,7 @@ bool MeterBusSensor::mbus_parse_frame(int frame_length) {
         checksum += telegram[i];
         testcounter++;
     }
-    ESP_LOGCONFIG(TAG, "testcounter=%d", testcounter);
+    // ESP_LOGCONFIG(TAG, "testcounter=%d", testcounter);
     for(i=19; i<(frame_length-1); i++) {
         checksum += telegram[i];
         testcounter++;
@@ -166,6 +166,7 @@ bool MeterBusSensor::mbus_parse_frame(int frame_length) {
                 if((telegram[i] & 0b01111000) == 0b00000000) { // Energy (Wh)
                     ESP_LOGCONFIG(TAG, "Energy (Wh)=%02X", telegram[i]);
                     double multiplyer = telegram[i] & 0b00000111;
+                    ESP_LOGCONFIG(TAG, "multiplyer=%d", multiplyer);
                     multiplyer = pow(10, multiplyer-3);
                     int i_data = 0;
                     int helper = 0;
