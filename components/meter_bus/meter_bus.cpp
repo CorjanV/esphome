@@ -52,7 +52,10 @@ void MeterBusComponent::loop() {
             telegram[index] = read();
             index++;     
             if(telegram[index-1] == MBUS_FRAME_STOPSIGN) {
-                new_telegram_available = true;               
+                new_telegram_available = true;
+                ESP_LOGCONFIG(TAG, "stopsign=%02X", MBUS_FRAME_STOPSIGN);
+                ESP_LOGCONFIG(TAG, "telegram[index-1]=%02X", telegram[index-1]);
+                ESP_LOGCONFIG(TAG, "index=%d", (index-1));  
             }    
         }
     }
