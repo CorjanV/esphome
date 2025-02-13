@@ -146,9 +146,11 @@ bool MeterBusSensor::mbus_parse_frame(int frame_length) {
     }
     // ESP_LOGCONFIG(TAG, "testcounter=%d", testcounter);
     for(i=19; i<(frame_length-1); i++) {
+        ESP_LOGCONFIG(TAG, "CHECKPOINT 1");
         checksum += telegram[i];
         testcounter++;
         if(DIF) {
+            ESP_LOGCONFIG(TAG, "CHECKPOINT 2");
             if((telegram[i] & 0b10000000) == 0) { // check if DIF extension bit is not set
                 if(((telegram[i] & 0x0F) <= 0b00000100) && ((telegram[i] & 0x0F) != 0b00000101)) { // Filter and keep data with 1, 2, 3 or 4 byte integers
                     number_of_data_bytes = telegram[i] & 0x0F;
@@ -162,8 +164,11 @@ bool MeterBusSensor::mbus_parse_frame(int frame_length) {
             } // else there are DIFE bytes after the DIF byte
         }
         if(VIF) {
+            ESP_LOGCONFIG(TAG, "CHECKPOINT 3");
             if((telegram[i] & 0b10000000) == 0) { // check if VIF extension bit is not set
+                ESP_LOGCONFIG(TAG, "CHECKPOINT 4");
                 if((telegram[i] & 0b01111000) == 0b00000000) { // Energy (Wh)
+                    ESP_LOGCONFIG(TAG, "CHECKPOINT 5");
                     ESP_LOGCONFIG(TAG, "Energy (Wh)=%02X", telegram[i]);
                     double multiplyer = telegram[i] & 0b00000111;
                     ESP_LOGCONFIG(TAG, "multiplyer=%d", multiplyer);
