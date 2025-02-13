@@ -94,6 +94,7 @@ void MeterBusSensor::dump_config() {
 }
 
 bool MeterBusSensor::mbus_parse_frame(int frame_length) {
+    ESP_LOGCONFIG(TAG, "TEST");
     ESP_LOGCONFIG(TAG, "telegram[0]=%02X telegram[1]=%02X telegram[2]=%02X, telegram[3]=%02X", telegram[0], telegram[1], telegram[2], telegram[3]);
     frame_length--;
     uint16_t checksum = 0;
