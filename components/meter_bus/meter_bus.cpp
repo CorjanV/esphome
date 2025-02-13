@@ -174,7 +174,9 @@ bool MeterBusSensor::mbus_parse_frame(int frame_length) {
                         helper |= telegram[1+i+i_data] << i_data*8;
                         checksum += telegram[1+i+i_data]; 
                     }
+                    ESP_LOGCONFIG(TAG, "helper=%d", helper);
                     energy_watthour_value = (float)(helper*multiplyer);
+                    ESP_LOGCONFIG(TAG, "energy_watthour_value=%.6f", energy_watthour_value);
                     i += number_of_data_bytes;
                     VIF = false;
                     DIF = true;
