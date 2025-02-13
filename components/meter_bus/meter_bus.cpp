@@ -94,7 +94,7 @@ void MeterBusSensor::dump_config() {
 }
 
 bool MeterBusSensor::mbus_parse_frame(int frame_length) {
-    ESP_LOGCONFIG(TAG, "TEST");
+    ESP_LOGCONFIG(TAG, "framelength=%d", frame_length);
     ESP_LOGCONFIG(TAG, "telegram[0]=%02X telegram[1]=%02X telegram[2]=%02X, telegram[3]=%02X", telegram[0], telegram[1], telegram[2], telegram[3]);
     frame_length--;
     uint16_t checksum = 0;
@@ -141,7 +141,7 @@ bool MeterBusSensor::mbus_parse_frame(int frame_length) {
         checksum += telegram[i];
         testcounter++;
     }
-
+    ESP_LOGCONFIG(TAG, "testcounter=%d", testcounter);
     for(i=19; i<(frame_length-1); i++) {
         checksum += telegram[i];
         testcounter++;
@@ -416,7 +416,7 @@ bool MeterBusSensor::mbus_parse_frame(int frame_length) {
     if(telegram[frame_length-1] != (checksum & 0xFF)) {
         memset(telegram, 0, sizeof(telegram));
         index = 0;
-        ESP_LOGCONFIG(TAG, "Checksum error");
+        ESP_LOGCONFIG(TAG, "Checksum error (tlgrm vs cs): %02X %02X", telegram[frame_length-1], (checksum & 0xFF));
         return false;
     }
 
