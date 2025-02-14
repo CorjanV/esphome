@@ -18,6 +18,8 @@ int index = 0;
 unsigned long current_millis = 0;
 unsigned long previous_millis = 0;
 bool new_telegram_available = false;
+bool data_is_actual = false;
+bool realistic_delta_temp_value = false;
 int number_of_data_bytes = 0;
 
 float energy_watthour_value = 0;
@@ -146,6 +148,11 @@ bool MeterBusSensor::mbus_parse_frame(int frame_length) {
         if(DIF) {
             if((telegram[i] & 0b10000000) == 0) { // check if DIF extension bit is not set
                 if(((telegram[i] & 0x0F) <= 0b00000100) && ((telegram[i] & 0x0F) != 0b00000101)) { // Filter and keep data with 1, 2, 3 or 4 byte integers
+                    if((telegram[i] & 0b01000000) == 0) { // check if storage number bit is not set and therefore it is actual data and not historical
+                        data_is_actual = true;
+                    } else {
+                        data_is_actual = false;
+                    }
                     number_of_data_bytes = telegram[i] & 0x0F;
                     DIF = false;
                     VIF = true;
@@ -154,11 +161,14 @@ bool MeterBusSensor::mbus_parse_frame(int frame_length) {
                     ESP_LOGCONFIG(TAG, "Error DIF at index : %d", i);
                     return false; // Length of data can not be defined and will cause errors while parsing the telegram, so return false
                 }
-            } // else there are DIFE bytes after the DIF byte
+            } else { // else there are DIFE bytes after the DIF byte
+                ESP_LOGCONFIG(TAG, "Error DIFE at index : %d", i);
+                return false; // The code can't handle DIFE bytes at this moment
+            }
         }
         if(VIF) {
             if((telegram[i] & 0b10000000) == 0) { // check if VIF extension bit is not set
-                     if((telegram[i] & 0b01111000) == 0b00000000) { // Energy (Wh)
+                     if((telegram[i] & 0b01111000) == 0b00000000 && data_is_actual) { // Energy (Wh)
                     double multiplyer = telegram[i] & 0b00000111;
                     multiplyer = pow(10, multiplyer-3);
                     int i_data = 0;
@@ -173,7 +183,7 @@ bool MeterBusSensor::mbus_parse_frame(int frame_length) {
                     DIF = true;
                     continue;
                 }
-                else if((telegram[i] & 0b01111000) == 0b00001000) { // Energy (Joule)
+                else if((telegram[i] & 0b01111000) == 0b00001000 && data_is_actual) { // Energy (Joule)
                     double multiplyer = telegram[i] & 0b00000111;
                     multiplyer = pow(10, multiplyer);
                     int i_data = 0;
@@ -188,7 +198,7 @@ bool MeterBusSensor::mbus_parse_frame(int frame_length) {
                     DIF = true;
                     continue;
                 }
-                else if((telegram[i] & 0b01111000) == 0b00010000) { // Volume (m3)
+                else if((telegram[i] & 0b01111000) == 0b00010000 && data_is_actual) { // Volume (m3)
                     double multiplyer = telegram[i] & 0b00000111;
                     multiplyer = pow(10, multiplyer-6);
                     int i_data = 0;
@@ -203,7 +213,7 @@ bool MeterBusSensor::mbus_parse_frame(int frame_length) {
                     DIF = true;
                     continue;
                 }
-                else if((telegram[i] & 0b01111000) == 0b00011000) { // Mass (kg)
+                else if((telegram[i] & 0b01111000) == 0b00011000 && data_is_actual) { // Mass (kg)
                     double multiplyer = telegram[i] & 0b00000111;
                     multiplyer = pow(10, multiplyer-3);
                     int i_data = 0;
@@ -218,7 +228,7 @@ bool MeterBusSensor::mbus_parse_frame(int frame_length) {
                     DIF = true;
                     continue;
                 }
-                else if((telegram[i] & 0b01111000) == 0b00101000) { // Power (watt)
+                else if((telegram[i] & 0b01111000) == 0b00101000 && data_is_actual) { // Power (watt)
                     double multiplyer = telegram[i] & 0b00000111;
                     multiplyer = pow(10, multiplyer-3);
                     int i_data = 0;
@@ -233,7 +243,7 @@ bool MeterBusSensor::mbus_parse_frame(int frame_length) {
                     DIF = true;
                     continue;
                 }
-                else if((telegram[i] & 0b01111000) == 0b00110000) { // Power (Joule/h)
+                else if((telegram[i] & 0b01111000) == 0b00110000 && data_is_actual) { // Power (Joule/h)
                     double multiplyer = telegram[i] & 0b00000111;
                     multiplyer = pow(10, multiplyer);
                     int i_data = 0;
@@ -248,7 +258,7 @@ bool MeterBusSensor::mbus_parse_frame(int frame_length) {
                     DIF = true;
                     continue;
                 }
-                else if((telegram[i] & 0b01111000) == 0b00111000) { // Volume Flow (m3/h)
+                else if((telegram[i] & 0b01111000) == 0b00111000 && data_is_actual) { // Volume Flow (m3/h)
                     double multiplyer = telegram[i] & 0b00000111;
                     multiplyer = pow(10, multiplyer-6);
                     int i_data = 0;
@@ -263,7 +273,7 @@ bool MeterBusSensor::mbus_parse_frame(int frame_length) {
                     DIF = true;
                     continue;
                 }
-                else if((telegram[i] & 0b01111000) == 0b01000000) { // Volume Flow (m3/min)
+                else if((telegram[i] & 0b01111000) == 0b01000000 && data_is_actual) { // Volume Flow (m3/min)
                     double multiplyer = telegram[i] & 0b00000111;
                     multiplyer = pow(10, multiplyer-7);
                     int i_data = 0;
@@ -278,7 +288,7 @@ bool MeterBusSensor::mbus_parse_frame(int frame_length) {
                     DIF = true;
                     continue;
                 }
-                else if((telegram[i] & 0b01111000) == 0b01001000) { // Volume Flow (m3/s)
+                else if((telegram[i] & 0b01111000) == 0b01001000 && data_is_actual) { // Volume Flow (m3/s)
                     double multiplyer = telegram[i] & 0b00000111;
                     multiplyer = pow(10, multiplyer-9);
                     int i_data = 0;
@@ -293,7 +303,7 @@ bool MeterBusSensor::mbus_parse_frame(int frame_length) {
                     DIF = true;
                     continue;
                 }
-                else if((telegram[i] & 0b01111000) == 0b01010000) { // Mass Flow (kg/h)
+                else if((telegram[i] & 0b01111000) == 0b01010000 && data_is_actual) { // Mass Flow (kg/h)
                     double multiplyer = telegram[i] & 0b00000111;
                     multiplyer = pow(10, multiplyer-3);
                     int i_data = 0;
@@ -308,7 +318,7 @@ bool MeterBusSensor::mbus_parse_frame(int frame_length) {
                     DIF = true;
                     continue;
                 }
-                else if((telegram[i] & 0b01111100) == 0b01011000) { // Flow temperature (degrees C)
+                else if((telegram[i] & 0b01111100) == 0b01011000 && data_is_actual) { // Flow temperature (degrees C)
                     double multiplyer = telegram[i] & 0b00000011;
                     multiplyer = pow(10, multiplyer-3);
                     int i_data = 0;
@@ -323,7 +333,7 @@ bool MeterBusSensor::mbus_parse_frame(int frame_length) {
                     DIF = true;
                     continue;
                 }
-                else if((telegram[i] & 0b01111100) == 0b01011100) { // Return temperature (degrees C)
+                else if((telegram[i] & 0b01111100) == 0b01011100 && data_is_actual) { // Return temperature (degrees C)
                     double multiplyer = telegram[i] & 0b00000011;
                     multiplyer = pow(10, multiplyer-3);
                     int i_data = 0;
@@ -338,7 +348,7 @@ bool MeterBusSensor::mbus_parse_frame(int frame_length) {
                     DIF = true;
                     continue;
                 }
-                else if((telegram[i] & 0b01111100) == 0b01100000) { // Temperature difference (degrees K)
+                else if((telegram[i] & 0b01111100) == 0b01100000 && data_is_actual) { // Temperature difference (degrees K)
                     double multiplyer = telegram[i] & 0b00000011;
                     multiplyer = pow(10, multiplyer-3);
                     int i_data = 0;
@@ -353,7 +363,7 @@ bool MeterBusSensor::mbus_parse_frame(int frame_length) {
                     DIF = true;
                     continue;
                 }
-                else if((telegram[i] & 0b01111100) == 0b01100100) { // External temperature (degrees C)
+                else if((telegram[i] & 0b01111100) == 0b01100100 && data_is_actual) { // External temperature (degrees C)
                     double multiplyer = telegram[i] & 0b00000011;
                     multiplyer = pow(10, multiplyer-3);
                     int i_data = 0;
@@ -368,7 +378,7 @@ bool MeterBusSensor::mbus_parse_frame(int frame_length) {
                     DIF = true;
                     continue;
                 }
-                else if((telegram[i] & 0b01111100) == 0b01101000) { // Pressure (Bar)
+                else if((telegram[i] & 0b01111100) == 0b01101000 && data_is_actual) { // Pressure (Bar)
                     double multiplyer = telegram[i] & 0b00000011;
                     multiplyer = pow(10, multiplyer-3);
                     int i_data = 0;
@@ -437,7 +447,7 @@ void MeterBusSensor::publish_sensor_data() {
     if(use_mass_flow_sensor) { this->mass_flow_->publish_state(mass_flow_value); }
     if(use_flow_temp_sensor) { this->flow_temp_->publish_state(flow_temp_value); }
     if(use_return_temp_sensor) { this->return_temp_->publish_state(return_temp_value); }
-    if(use_delta_temp_sensor) { this->delta_temp_->publish_state(delta_temp_value); }
+    if(use_delta_temp_sensor && realistic_delta_temp_value) { this->delta_temp_->publish_state(delta_temp_value); }
     if(use_external_temp_sensor) { this->external_temp_->publish_state(external_temp_value); }
     if(use_pressure_sensor) { this->pressure_->publish_state(pressure_value); }
 }
