@@ -19,6 +19,7 @@ unsigned long current_millis = 0;
 unsigned long previous_millis = 0;
 bool new_telegram_available = false;
 bool data_is_actual = false;
+bool realistic_delta_temp_value = false;
 int number_of_data_bytes = 0;
 
 float energy_watthour_value = 0;
@@ -387,7 +388,12 @@ bool MeterBusSensor::mbus_parse_frame(int frame_length) {
                         helper |= telegram[1+i+i_data] << i_data*8; 
                         checksum += telegram[1+i+i_data];
                     }
-                    if((helper*multiplyer) < 20) {delta_temp_value = (float)(helper*multiplyer);} // BEUNHAAS
+                    delta_temp_value = (float)(helper*multiplyer);
+                    if(delta_temp_value < 20) {
+                        realistic_delta_temp_value = true;
+                    } else {
+                        realistic_delta_temp_value = false;
+                    }
                     i += number_of_data_bytes;
                     VIF = false;
                     DIF = true;
@@ -434,14 +440,14 @@ bool MeterBusSensor::mbus_parse_frame(int frame_length) {
                     continue;
                 }
             } else { // Detected VIFE
-                ESP_LOGCONFIG(TAG, "CHECKPOINT 7, index=%d", i);
+                // ESP_LOGCONFIG(TAG, "CHECKPOINT 7, index=%d", i);
                 VIF = false;
                 VIFE = true;
                 continue;
             }
         }
         if(VIFE) {
-            ESP_LOGCONFIG(TAG, "CHECKPOINT 8, index=%d", i);
+            // ESP_LOGCONFIG(TAG, "CHECKPOINT 8, index=%d", i);
             int i_data = 0;
             for(i_data=0; i_data<number_of_data_bytes; i_data++) {
                 checksum += telegram[1+i+i_data];
@@ -479,7 +485,7 @@ void MeterBusSensor::publish_sensor_data() {
     if(use_mass_flow_sensor) { this->mass_flow_->publish_state(mass_flow_value); }
     if(use_flow_temp_sensor) { this->flow_temp_->publish_state(flow_temp_value); }
     if(use_return_temp_sensor) { this->return_temp_->publish_state(return_temp_value); }
-    if(use_delta_temp_sensor) { this->delta_temp_->publish_state(delta_temp_value); }
+    if(use_delta_temp_sensor && realistic_delta_temp_value) { this->delta_temp_->publish_state(delta_temp_value); }
     if(use_external_temp_sensor) { this->external_temp_->publish_state(external_temp_value); }
     if(use_pressure_sensor) { this->pressure_->publish_state(pressure_value); }
 }
