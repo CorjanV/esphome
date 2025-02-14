@@ -148,7 +148,7 @@ bool MeterBusSensor::mbus_parse_frame(int frame_length) {
         if(DIF) {
             if((telegram[i] & 0b10000000) == 0) { // check if DIF extension bit is not set
                 if(((telegram[i] & 0x0F) <= 0b00000100) && ((telegram[i] & 0x0F) != 0b00000101)) { // Filter and keep data with 1, 2, 3 or 4 byte integers
-                    if((telegram[i] & 0b01000000) == 0) { // check if storage number bit is not set and therefore it is actual data and not historical
+                    if((telegram[i] & 0b01110000) == 0) { // check if storage number bit is not set and therefore it is actual data and not historical. Also handle only instantanenous values
                         data_is_actual = true;
                     } else {
                         data_is_actual = false;
