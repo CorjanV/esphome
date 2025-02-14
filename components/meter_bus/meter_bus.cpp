@@ -20,6 +20,7 @@ unsigned long previous_millis = 0;
 bool new_telegram_available = false;
 bool data_is_actual = false;
 bool realistic_delta_temp_value = false;
+bool realistic_power_value = false;
 int number_of_data_bytes = 0;
 
 float energy_watthour_value = 0;
@@ -238,6 +239,11 @@ bool MeterBusSensor::mbus_parse_frame(int frame_length) {
                         checksum += telegram[1+i+i_data];
                     }
                     power_watt_value = (float)(helper*multiplyer);
+                    if(power_watt_value < 20000) {
+                        realistic_power_value = true;
+                    } else {
+                        realistic_power_value = false;
+                    }
                     i += number_of_data_bytes;
                     VIF = false;
                     DIF = true;
@@ -444,7 +450,7 @@ void MeterBusSensor::publish_sensor_data() {
     if(use_energy_joule_sensor) { this->energy_joule_->publish_state(energy_joule_value); }
     if(use_volume_sensor) { this->volume_->publish_state(volume_value); }
     if(use_mass_sensor) { this->mass_->publish_state(mass_value); }
-    if(use_power_watt_sensor) { this->power_watt_->publish_state(power_watt_value); }
+    if(use_power_watt_sensor && realistic_power_value) { this->power_watt_->publish_state(power_watt_value); }
     if(use_power_jouleperhour_sensor) { this->power_jouleperhour_->publish_state(power_jouleperhour_value); }
     if(use_volume_flow_hour_sensor) { this->volume_flow_hour_->publish_state(volume_flow_hour_value); }
     if(use_volume_flow_minute_sensor) { this->volume_flow_minute_->publish_state(volume_flow_minute_value); }
