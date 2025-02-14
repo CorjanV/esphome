@@ -389,6 +389,9 @@ bool MeterBusSensor::mbus_parse_frame(int frame_length) {
                         checksum += telegram[1+i+i_data];
                     }
                     delta_temp_value = (float)(helper*multiplyer);
+                    ESP_LOGCONFIG(TAG, "telegram[i]=%02X", telegram[i]);
+                    ESP_LOGCONFIG(TAG, "telegram[i+1]=%02X", telegram[i+1]);
+                    ESP_LOGCONFIG(TAG, "telegram[i+2]=%02X", telegram[i+2]);
                     ESP_LOGCONFIG(TAG, "helper=%d", helper);
                     ESP_LOGCONFIG(TAG, "multiplyer=%d", multiplyer);
                     ESP_LOGCONFIG(TAG, "delta temp value=%d", delta_temp_value);
