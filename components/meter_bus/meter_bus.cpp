@@ -358,6 +358,11 @@ bool MeterBusSensor::mbus_parse_frame(int frame_length) {
                         checksum += telegram[1+i+i_data];
                     }
                     delta_temp_value = (float)(helper*multiplyer);
+                    if(delta_temp_value < 20) {
+                        realistic_delta_temp_value = true;
+                    } else {
+                        realistic_delta_temp_value = false;
+                    }
                     i += number_of_data_bytes;
                     VIF = false;
                     DIF = true;
