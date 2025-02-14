@@ -53,7 +53,7 @@ void MeterBusComponent::loop() {
         if(available()) {
             telegram[index] = read();
             index++;     
-            if(telegram[index-1] == MBUS_FRAME_STOPSIGN) {
+            if(telegram[index-1] == MBUS_FRAME_STOPSIGN && index == (telegram[1]+5)) {
                 new_telegram_available = true;               
             }    
         }
